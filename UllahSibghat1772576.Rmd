@@ -1,0 +1,210 @@
+---
+title: "SDS2HW1"
+author: "Sibghat"
+date: "February 26, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Your Last+First Name Sibghat Ullah  Your Matricola 1772576
+
+0. Do you know how to use an RMarkdown file to answer these questions with text and R code?
+
+## Yes, or at least I hope Yes
+
+1. Fix the *seed* to start the simulation of a single random variable from a (standard) uniform distribution on [0,1]. Use your *matricola* number as seed. 
+Call the simulated value `lambda`
+
+```{r}
+set.seed(1772576)
+lambda = runif(1) 
+lambda
+```
+2. Simulate 1000 random variables using the following code
+```{r}
+X = runif(1000)
+Y = - lambda * log(X)
+```
+and then plot the histogram of the simulated values using the option `freq=FALSE`.
+```{r}
+hist(Y,col = 'orchid', freq = FALSE)
+```
+
+
+
+3. Can you **prove** that the theoretical distribution of $Y$ is exponential with rate equal to `1/lambda`? [explain or ... do it with all details!]
+
+
+Since
+
+
+$Y$ = $-lambda$*$log(X)$
+
+and $X$ is a Sample from Standard Uniform distribution
+
+$X$ -> U(0,1) so from Unif Disb $a$=0, $b$=1
+
+$P$($X$<=$a$) = ($X$-$a$)/($b$-$a$)  (Unif Distribution)
+
+then From Basic law of Prob
+
+$P$($X$>$a$) = 1- P($X$<=$a$)
+
+from the given input, we can derive
+
+$F_{Y}(y)$ =  $F_{X}(-$lambda$*$log(X)$)$   
+
+$F_{Y}(y)$ =  $P$(-$lambda$ *$log(X)$ <= $y$)
+
+$F_{Y}(y)$ =  $P$ ($log(X)$ > -$y$/$lambda$)
+
+$F_{Y}(y)$ =  $P$ ($X$ < $exp$(-$y$/$lambda$))
+
+$F_{Y}(y)$ =  $exp$(-$y$/$lambda$)-0/1-0 (putting the values of a and b)
+
+$F_{Y}(y)$ =  $exp$ (-$y$/$lambda$)
+
+$F_{Y}(y)$ =  $exp$ (-$y$ * 1/$lambda$)
+      
+So, it means the Distribution function of Y can be expressed in the form of
+exp, with the rate of 1/lambda
+
+Hence Proved
+      
+    
+4. Can you plot a graphical representation of the theoretical distribution? 
+```{r}
+curve(exp(-x/lambda), col='red', lwd=4)
+```
+
+
+Note that this is Exponential Decay, but Nontheless Exponential
+
+5. Can you tell what is the relation between the theoretical curve of the density of $Y$ and the graph of the histogram?
+
+The below Graph shows the relationship between the sample distribution and theoretical distribution, It is evident from the Graph that in Principle, its the Same thing.
+
+```{r}
+hist(Y,col = 'pink',freq = FALSE, prob = TRUE)
+curve(exp(-x/lambda), add = TRUE, col='blue', lwd=4)
+```
+
+6. Suppose we have a random vector $(Z,Y)$ Do you know what a joint density $f_{Z,Y}(z,y)$ is?  What are the properties it must satisfy?
+
+Two Random variables $Z$ and $Y$ are Jointly continuous if there is a Non Negative function (>0) 
+
+$f_{Z,Y}(z,y)$ such that:
+
+$f_{Z,Y}(z,y)$: $R2$->$R$
+
+and for any set $A$ belongs to $R2$ , We have
+
+$P$(($Z$,$Y$) belongs to A) = double integral w.r.t both variables ($f_{Z,Y}(z,y)$ $dz$ $dy$)
+
+The function $f_{Z,Y}(z,y)$ is called Joint PDF. It must satisfy that
+
+1. $f_{Z,Y}(z,y)$ >= 0 (all the time)
+
+2. double integral w.r.t both variables ($f_{Z,Y}(z,y)$ $dz$ $dy$) = 1
+
+Finally, We can write it formally like this:
+
+$f_{Z,Y}(z,y)$ = $f_{Z|Y}(z|y)$ * $f_{Y}(y)$
+
+or 
+
+$f_{z,y}(z,y)$ = $f_{y|z}(y|z)$ * $f_{z}(z)$
+
+
+7. Can you derive in formula the distribution of $Z$? How it is called? 
+
+The distribution of Z is called the marginal distribution of Z in the context of Joint probability. It is achieved by integrating the function $f_{Z,Y}(z,y)$ w.r.t y.
+
+Formula can be written as:
+
+$F_{Z}(z)$ = integral w.r.t y ($f_{Z,Y}(z,y)$ $dy$)
+
+
+8. Conditionally on each simulated $Y_i=y_i$ (i=1,2,...,1000), simulate $Z_i = y_i*W_i$ where $W_i$ has distribution standard Normal and is independent of Y_i. What is the conditional distribution of $Z|Y=y$?
+
+```{r}
+W = rnorm(1000)
+Z = Y * W
+hist(Z,col = 'pink', freq = FALSE, main = 'Conditional Distribution of Z')
+lines(density(Z), col='red', lwd= 4)
+```
+
+It is evident from looking in the Graph that the RV Z = y * W (while Wi is realization og Std Normal Distribution, and Yi is realization of exponential distribution) exhibits prpoerties of Std Normal Distribution.
+
+To Further Clarify, Let's look into Mean, Median and STD of Z
+```{r}
+print ('Mean of conditional distribution of Z is')
+print (mean(Z))
+print ('Median of conditional distribution of Z is')
+print (median(Z))
+print ('STD of conditional distrbution of Z is')
+print (sd(Z))
+```
+This makes sure that the conditional Distribution of $Z$|$Y$ is Standard Normal. 
+
+9. Can you provide a simulation from the marginal distribution of $Z$? 
+
+To get the marginal distribution of $Z$, We would have to integrate the $f_{Z,Y}(z,y)$ w.r.t $d$$y$ 
+
+After simplying the final formula for marginal distribution of $Z$ becomes
+
+$f_{Z}(z)$ = $int$ ($f_{Z,Y}(z,y)$ $d$$y$)
+```{r}
+marginal_Z= W * ((Y*Y)/2) #After Simplification, this becomes the final formula 
+hist(marginal_Z,col = 'pink',freq = FALSE)
+lines(density(marginal_Z), col='red', lwd= 4)
+```
+Again, its clear that the marginal distribution of Z also behaves like Standard Normal distribution. This is the same pattern we have seen above. To be further clear, let's print the mean, media and STD of te marginal distribution of Z
+
+```{r}
+print ('Mean of marginal of Z is')
+print (mean(marginal_Z))
+print ('Median of marginal of Z is')
+print (median(marginal_Z))
+print ('STD of marginal of Z is')
+print (sd(marginal_Z))
+```
+10. Can you provide an approximation of the marginal distribution of $Z$? Please justify your answer.
+
+We now know that the Marginal Distribution of Z follows a Standard Normal Pattern, Hence, We can approximate the marginal_z , if we make a sample of 1000 RVS from Standard Normal, We'd be able to approximate the marginal distribution of Z
+
+```{r}
+approximation = rnorm(1000)
+hist(approximation, col ='pink', freq = FALSE)
+lines(density(approximation), col='red', lwd=4)
+```
+11. How could you derive/write the joint distribution of $(Z,Y)$? 
+
+The Joint distribution of $(Z,Y)$ can be derived as such:
+
+Since
+
+$Z$ = $Y$$W$
+
+Wheras 
+
+$Y$ = $exp$($-Y$/$lambda$) #Exponential Distribution
+
+$W$ = $exp$(-1/2($W$)**)
+
+$f_{Z,Y}(z,y)$ = $f_{Z|Y}(z|y)$ * $f_{Y}(y)$
+
+So
+
+$F_{Z,Y}(z,y)$ = double integral ($f_{Z,Y}(z,y)$ $dy$ $dz$)
+
+$F_{Z,Y}(z,y)$ = double integral ($f_{Z|Y}(z|y)$ * $f_{Y}(y)$ $dy$ $dz$)
+
+Note: This formula can be simplified further as well.
+
+
+
